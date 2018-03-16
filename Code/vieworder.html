@@ -1,0 +1,373 @@
+<!DOCTYPE hTML>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+	<title>Costs</title>
+		<link rel="stylesheet" href="main2.css" type="text/css">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="keywords" content="footer, contact, form, icons" />
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+		<link href="http://fonts.googleapis.com/css?family=Cookie" rel="stylesheet" type="text/css">				<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+		<script src="jquery-3.3.1.min.js"></script>
+		
+	</head>
+	<body onload="LoadPage()">
+	<div class="topnav" id="myTopnav">
+					
+			<a href="index.html" class="active">Home</a>
+			<a href="order.html">Order</a>
+			<a href="Costs.html">My Costs</a>
+			<a href="profits.html">Profits</a>
+			<a href="charts.html">Charts</a>
+			<a href="index.html">Set Budget</a>
+			<a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="responsive()">&#9776;</a>
+		</div>
+		<div class="title">My Shop</div>
+		
+	<div class="w3-card-4">
+    <div class="w3-container w3-green">
+      <h2>View Order</h2>
+    </div>
+
+    <form class="w3-container">
+      <p>
+	<input id="inputFileToLoad" type="file" onchange="PreviewImage();" multiple /><br>
+	<img src="" id="imgPreview" />
+	<p>Description</p><input type="text" class="w3-input" id="Description">
+	<p>High End Seller</p><input type="text" class="w3-input" id="HighEndSeller">
+	<p>My Price</p><input type="text" class="w3-input" id="MyPrice">
+	<p>Delivery From Seller</p><input type="text" class="w3-input" id="DeliveryFromSeller">
+	<p>Name of Client</p><input type="text" class="w3-input" id="NameOfClient">
+	<p>Address</p><input type="text" class="w3-input" id="Address">
+	<p>Date of Order</p><input type="text" class="w3-input" id="DateOfOrder">
+	<p>Days From Order</p><input type="text" class="w3-input" id="DaysFromOrder">
+	<p>Selling Price</p><input type="text" class="w3-input" id="SellingPrice">
+	<input type="checkbox" id="DeliveredToClient" onchange="UpdateBudgetC()" > Delivered to Client<br>
+	<input type="checkbox" id="DeliveredToMe" onchange="UpdateBudgetM()" > Delivered to me<br>
+	
+	</form>
+	
+	<button id="save-btn" onclick="EditOrder()" >Edit Order</button>
+	<button id="save-btn" onclick="DeleteOrder()" >Delete</button>	
+		
+		
+	<footer class="footer-distributed">
+
+			<div class="footer-left">
+
+				<h3>My<span>Shop</span></h3>
+
+				<p class="footer-links">
+					<a href="index.html">Home</a>
+					·
+					<a href="order.html">Order</a>
+					·
+					<a href="charts.html">Charts</a>
+					·
+					<a href="index.html">Set Budget</a>
+				</p>
+
+				<p class="footer-company-name">My Shop &copy; 2018</p>
+
+
+
+				</div>
+
+			</div>
+
+
+
+	</footer>	
+	<script src="https://www.gstatic.com/firebasejs/4.10.1/firebase.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/4.9.1/firebase-database.js"></script>	
+	<script>
+	  // Initialize Firebase
+	  var config = {
+		apiKey: "",
+		authDomain: "",
+		databaseURL: "",
+		projectId: "",
+		storageBucket: "",
+		messagingSenderId: ""
+	  };
+	  firebase.initializeApp(config);	
+	function responsive() {
+		var x = document.getElementById("myTopnav");
+		if (x.className === "topnav") {
+			x.className += " responsive";
+		} else {
+			x.className = "topnav";
+		}
+	}
+
+	</script>
+	<script>
+	function LoadPage(){
+	    if(localStorage.ref==="0"){
+		return firebase.database().ref("MyOrderList/"+localStorage.ViewOrderId).once('value',function(data){
+		CurrentOrder=data.val();
+		document.getElementById("Description").value=CurrentOrder.Discription;
+		document.getElementById("HighEndSeller").value=CurrentOrder.HighEndSeller;
+		document.getElementById("MyPrice").value=CurrentOrder.MyPrice;
+		document.getElementById("DeliveryFromSeller").value=CurrentOrder.DeliveryFromSeller;
+		document.getElementById("NameOfClient").value=CurrentOrder.Nameofclient;
+		document.getElementById("Address").value=CurrentOrder.Address;
+		document.getElementById("DateOfOrder").value=CurrentOrder.DateOfOrder;
+		document.getElementById("SellingPrice").value=CurrentOrder.SellingPrice;
+		document.getElementById("DaysFromOrder").value=CurrentOrder.DaysFromOrder;
+		if(CurrentOrder.DeliveredToClient==="false"){
+		document.getElementById("DeliveredToClient").checked=false;
+		localStorage.DeliveredToClient="0";
+		}
+		else if(CurrentOrder.DeliveredToClient==="true"){
+		document.getElementById("DeliveredToClient").checked=true;
+		localStorage.DeliveredToClient="1";
+		}
+		if(CurrentOrder.DeliveredToMe==="false"){
+		document.getElementById("DeliveredToMe").checked=false;
+		localStorage.DeliveredToMe="0";
+		
+		}
+		else if(CurrentOrder.DeliveredToMe==="true"){
+		document.getElementById("DeliveredToMe").checked=true;
+		localStorage.DeliveredToMe="1";
+		}
+		document.getElementById("imgPreview").src=CurrentOrder.Image;
+		});
+		}
+		
+		return firebase.database().ref("MyDeliveredList/"+localStorage.ViewOrderId).once('value',function(data){
+		CurrentOrder=data.val();
+		document.getElementById("Description").value=CurrentOrder.Discription;
+		document.getElementById("HighEndSeller").value=CurrentOrder.HighEndSeller;
+		document.getElementById("MyPrice").value=CurrentOrder.MyPrice;
+		document.getElementById("DeliveryFromSeller").value=CurrentOrder.DeliveryFromSeller;
+		document.getElementById("NameOfClient").value=CurrentOrder.Nameofclient;
+		document.getElementById("Address").value=CurrentOrder.Address;
+		document.getElementById("DateOfOrder").value=CurrentOrder.DateOfOrder;
+		document.getElementById("SellingPrice").value=CurrentOrder.SellingPrice;
+		document.getElementById("DaysFromOrder").value=CurrentOrder.DaysFromOrder;
+		if(CurrentOrder.DeliveredToClient==="false"){
+		document.getElementById("DeliveredToClient").checked=false;
+		localStorage.DeliveredToClient="0";
+		}
+		else if(CurrentOrder.DeliveredToClient==="true"){
+		document.getElementById("DeliveredToClient").checked=true;
+		localStorage.DeliveredToClient="1";
+		}
+		if(CurrentOrder.DeliveredToMe==="false"){
+		document.getElementById("DeliveredToMe").checked=false;
+		localStorage.DeliveredToMe="0";
+		
+		}
+		else if(CurrentOrder.DeliveredToMe==="true"){
+		document.getElementById("DeliveredToMe").checked=true;
+		localStorage.DeliveredToMe="1";
+		}
+		document.getElementById("imgPreview").src=CurrentOrder.Image;
+		});
+		
+	}
+	function EditOrder(){
+	if(localStorage.DeliveredToClient==="0" || localStorage.DeliveredToMe==="0"){
+	if(document.getElementById("DeliveredToClient").checked==false){
+	
+	   var img = document.getElementById("imgPreview");
+	   var canvas = document.createElement('canvas');
+	   var canvasCopy = document.createElement("canvas");
+	   var copyContext = canvasCopy.getContext("2d");	
+    
+       var ratio = 1;
+		var maxWidth=200;
+		var maxHeight=200;
+        if(img.width > maxWidth)
+            ratio = maxWidth / img.width;
+        else if(img.height > maxHeight)
+            ratio = maxHeight / img.height;
+        canvasCopy.width = img.width;
+        canvasCopy.height = img.height;
+        copyContext.drawImage(img, 0, 0);
+        canvas.width = img.width * ratio;
+        canvas.height = img.height * ratio;
+        canvas.getContext("2d").drawImage(canvasCopy, 0, 0, canvasCopy.width, canvasCopy.height, 0, 0, canvas.width, canvas.height);
+		
+	var img=document.getElementById("imgPreview");	
+
+	
+	img.src = canvas.toDataURL();
+	img.style.width="auto";
+	img.style.maxWidth="100%";
+	img.style.height="auto";		
+	img.onload=function(){
+
+	img.hidden=false;
+	
+	
+	
+	var newOrder={
+	"Image": img.src,
+	"Discription": document.getElementById("Description").value,
+	"HighEndSeller": document.getElementById("HighEndSeller").value,
+	"MyPrice": document.getElementById("MyPrice").value,
+	"DeliveryFromSeller": document.getElementById("DeliveryFromSeller").value,
+	"Nameofclient": document.getElementById("NameOfClient").value,
+	"Address": document.getElementById("Address").value,
+	"DateOfOrder": document.getElementById("DateOfOrder").value,
+	"SellingPrice": document.getElementById("SellingPrice").value,
+    "DeliveredToMe": (document.getElementById("DeliveredToMe").checked)?"true":"false",
+    "DeliveredToClient": (document.getElementById("DeliveredToClient").checked)?"true":"false",	
+	"DaysFromOrder": document.getElementById("DaysFromOrder").value,
+	"Profit": (Number(document.getElementById("SellingPrice").value)-Number(document.getElementById("MyPrice").value)-Number(document.getElementById("DeliveryFromSeller").value)).toString() 	
+	};
+	var updates={}
+	updates['/MyOrderList/'+localStorage.ViewOrderId]=newOrder;
+	firebase.database().ref().update(updates);
+	localStorage.ref="0";
+	window.alert("Order is Updated");
+	}
+	}
+	else
+	{
+	var newOrder=null;
+	firebase.database().ref('/MyOrderList/'+localStorage.ViewOrderId).set(null);
+	
+	 var img = document.getElementById("imgPreview");
+	   var canvas = document.createElement('canvas');
+	   var canvasCopy = document.createElement("canvas");
+	   var copyContext = canvasCopy.getContext("2d");	
+    
+       var ratio = 1;
+		var maxWidth=200;
+		var maxHeight=200;
+        if(img.width > maxWidth)
+            ratio = maxWidth / img.width;
+        else if(img.height > maxHeight)
+            ratio = maxHeight / img.height;
+        canvasCopy.width = img.width;
+        canvasCopy.height = img.height;
+        copyContext.drawImage(img, 0, 0);
+        canvas.width = img.width * ratio;
+        canvas.height = img.height * ratio;
+        canvas.getContext("2d").drawImage(canvasCopy, 0, 0, canvasCopy.width, canvasCopy.height, 0, 0, canvas.width, canvas.height);
+		
+	var img=document.getElementById("imgPreview");	
+
+	
+	img.src = canvas.toDataURL();
+	img.style.width="auto";
+	img.style.maxWidth="100%";
+	img.style.height="auto";		
+	img.onload=function(){
+
+	img.hidden=false;
+	
+	var neworder={
+	"Image": document.getElementById("imgPreview").src,
+	"Discription": document.getElementById("Description").value,
+	"HighEndSeller": document.getElementById("HighEndSeller").value,
+	"MyPrice": document.getElementById("MyPrice").value,
+	"DeliveryFromSeller": document.getElementById("DeliveryFromSeller").value,
+	"Nameofclient": document.getElementById("NameOfClient").value,
+	"Address": document.getElementById("Address").value,
+	"DateOfOrder": document.getElementById("DateOfOrder").value,
+	"SellingPrice": document.getElementById("SellingPrice").value,
+    "DeliveredToMe": (document.getElementById("DeliveredToMe").checked).toString(),
+    "DeliveredToClient": (document.getElementById("DeliveredToClient").checked).toString(),	
+	"DaysFromOrder": document.getElementById("DaysFromOrder").value,
+	"Profit": (Number(document.getElementById("SellingPrice").value)-Number(document.getElementById("MyPrice").value)-Number(document.getElementById("DeliveryFromSeller").value)).toString() 	
+	};
+	var updates={};
+	updates['/MyDeliveredList/'+localStorage.ViewOrderId]=neworder;
+	firebase.database().ref().update(updates);
+	firebase.database().ref("TotalProfit").once("value").then(function(data){
+	var profit=data.val();
+	localStorage.ref="1";
+	firebase.database().ref("TotalProfit").set({'TotalProfit': (Number(profit.TotalProfit)+Number(neworder.Profit)).toString()});
+	window.alert("Order is Updated");
+	
+	});
+	}
+	}
+	
+	window.location.href = "vieworder.html";
+	}
+	else
+	window.alert("Can't do this Edit");
+	}
+	function UpdateBudgetC(){
+	if(localStorage.DeliveredToClient==="0" && localStorage.DeliveredToMe==="1"){
+	firebase.database().ref('Budget').once('value').then(function(data) {
+	var budget=data.val();
+	//console.log(budget.Budget);
+	firebase.database().ref("Budget").set({'Budget': (Number(budget.Budget)+Number(document.getElementById("DeliveredToClient").checked?document.getElementById("SellingPrice").value:'-'+document.getElementById("SellingPrice").value)).toString()});
+	console.log(budget.Budget);
+	});
+	}
+	else
+	{
+	localStorage.DeliveredToClient==="1"?document.getElementById("DeliveredToClient").checked=true:document.getElementById("DeliveredToClient").checked=false;
+	window.alert("Can't do this change");
+	}
+	
+	}
+	function UpdateBudgetM(){
+	console.log(localStorage.DeliveredToMe);
+	if(localStorage.DeliveredToMe==="0"){	
+	firebase.database().ref('Budget').once('value').then(function(data) {
+	var budget=data.val();
+	firebase.database().ref("Budget").set({'Budget': (Number(budget.Budget)-Number(document.getElementById("DeliveredToMe").checked?document.getElementById("MyPrice").value:'-'+document.getElementById("MyPrice").value)-Number(document.getElementById("DeliveredToMe").checked?document.getElementById("DeliveryFromSeller").value:'-'+document.getElementById("DeliveryFromSeller").value)).toString()});
+	});
+	}
+	else 
+	{document.getElementById("DeliveredToMe").checked=true;
+	window.alert("Can't do this change");}
+	
+	}
+	function DeleteOrder(){
+	
+	if(localStorage.DeliveredToMe==="0"){
+
+	firebase.database().ref('MyOrderList/'+localStorage.ViewOrderId).set(null);
+	window.alert("Order is Deleted");
+	window.location.href = "index.html";
+	}
+	else {
+	if(localStorage.DeliveredToClient==="0"){
+	window.alert("The item can't be deleted since it is delivered to you but not to client");
+	}
+	else{
+	var newOrder=null;
+	var updates={};
+	updates['/MyDeliveredList/'+localStorage.ViewOrderId]=newOrder;
+	firebase.database().ref().update(updates);
+	window.alert("Order is Deleted");
+	window.location.href = "index.html";
+	}
+	}
+	
+	}
+	
+	</script>
+	<script type='text/javascript'>
+	  function PreviewImage() {
+
+		var filesSelected = document.getElementById("inputFileToLoad").files;
+		if (filesSelected.length > 0) {
+		  var fileToLoad = filesSelected[0];
+
+		  var fileReader = new FileReader();
+
+		  fileReader.onload = function(fileLoadedEvent) {
+			var srcData = fileLoadedEvent.target.result; // <--- data: base64
+			document.getElementById("imgPreview").src=fileLoadedEvent.target.result;
+			document.getElementById("imgPreview").hidden=true;
+		  }
+		  fileReader.readAsDataURL(fileToLoad);
+		}
+	  }
+	</script>
+	
+	</body>
+	</html>

@@ -1,0 +1,199 @@
+<!DOCTYPE hTML>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+	<title>Costs</title>
+		<link rel="stylesheet" href="main2.css" type="text/css">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="keywords" content="footer, contact, form, icons" />
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+		<link href="http://fonts.googleapis.com/css?family=Cookie" rel="stylesheet" type="text/css">
+		<script src="jquery-3.3.1.min.js"></script>
+		<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	</head>
+	<body >
+			<div class="topnav" id="myTopnav">
+					
+			<a href="index.html" class="active">Home</a>
+			<a href="order.html">Order</a>
+			<a href="Costs.html">My Costs</a>
+			<a href="profits.html">Profits</a>
+			<a href="charts.html">Charts</a>
+			<a href="index.html">Set Budget</a>
+			<a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="responsive()">&#9776;</a>
+		</div>	
+	<div class="title">My Shop</div>
+	<div class="w3-container">
+  
+  
+	<div class="w3-card-4">
+    <div class="w3-container w3-green">
+      <h2>Input Order</h2>
+    </div>
+
+    <form class="w3-container">
+      <p>
+	<input id="inputFileToLoad" onchange="LoadImage()" type="file"  /><br>
+	<img src="" hidden id="imgPreview" />
+	<div id="imgTest"></div>
+	<p>Description</p><input type="text" class="w3-input" id="Description">
+	<p>High End Seller</p><input type="text" class="w3-input" id="HighEndSeller">
+	<p>My Price</p><input type="text" class="w3-input" id="MyPrice">
+	<p>Delivery From Seller</p><input type="text" class="w3-input" id="DeliveryFromSeller">
+	<p>Name of Client</p><input type="text" class="w3-input" id="NameOfClient">
+	<p>Address</p><input type="text" class="w3-input" id="Address">
+	<p>Date of Order (dd/MM/YYYY)</p><input type="text" class="w3-input" id="DateOfOrder">
+	<p>Selling Price</p><input type="text" class="w3-input" id="SellingPrice">
+	</form>
+	
+	<button id="save-btn" onclick="writeUserData()" >Add Order</button>	
+	<footer class="footer-distributed">
+
+			<div class="footer-left">
+
+				<h3>My<span>Shop</span></h3>
+
+				<p class="footer-links">
+					<a href="index.html">Home</a>
+					·
+					<a href="order.html">Order</a>
+					·
+					<a href="charts.html">Charts</a>
+					·
+					<a href="index.html">Set Budget</a>
+				</p>
+
+				<p class="footer-company-name">MyShop &copy; 2018</p>
+
+
+			</div>
+
+
+
+		</footer>
+
+	<script src="https://www.gstatic.com/firebasejs/4.10.1/firebase.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/4.9.1/firebase-database.js"></script>
+	<script>
+	  // Initialize Firebase
+	  var config = {
+		apiKey: "",
+		authDomain: "",
+		databaseURL: "",
+		projectId: "",
+		storageBucket: "",
+		messagingSenderId: ""
+	  };
+	  firebase.initializeApp(config);
+	</script>		
+	<script>
+		function responsive() {
+		var x = document.getElementById("myTopnav");
+		if (x.className === "topnav") {
+			x.className += " responsive";
+		} else {
+			x.className = "topnav";
+		}
+	}
+	var database = firebase.database();
+	  function LoadImage() {
+
+		var filesSelected = document.getElementById("inputFileToLoad").files;
+		if (filesSelected.length > 0) {
+		  var fileToLoad = filesSelected[0];
+
+		  var fileReader = new FileReader();
+
+		  fileReader.onload = function(fileLoadedEvent) {
+			var img =document.getElementById("imgPreview");
+			img.src=fileLoadedEvent.target.result; // <--- data: base64
+			
+		  }
+		  fileReader.readAsDataURL(fileToLoad);
+		}
+	  }
+	    
+	  
+	
+	function writeUserData() {
+    var filesSelected = document.getElementById("inputFileToLoad").files;
+    if (filesSelected.length > 0) {
+	  if(/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/.test(document.getElementById("DateOfOrder").value)){	
+      var fileToLoad = filesSelected[0];
+
+      var fileReader = new FileReader();
+
+	   fileReader.onload = function(fileLoadedEvent) {
+       var img = document.getElementById("imgPreview");
+	   var canvas = document.createElement('canvas');
+	   var canvasCopy = document.createElement("canvas");
+	   var copyContext = canvasCopy.getContext("2d");	
+    
+       var ratio = 1;
+		var maxWidth=200;
+		var maxHeight=200;
+        if(img.width > maxWidth)
+            ratio = maxWidth / img.width;
+        else if(img.height > maxHeight)
+            ratio = maxHeight / img.height;
+        canvasCopy.width = img.width;
+        canvasCopy.height = img.height;
+        copyContext.drawImage(img, 0, 0);
+        canvas.width = img.width * ratio;
+        canvas.height = img.height * ratio;
+        canvas.getContext("2d").drawImage(canvasCopy, 0, 0, canvasCopy.width, canvasCopy.height, 0, 0, canvas.width, canvas.height);
+		
+	var img=document.getElementById("imgPreview");	
+
+	
+	img.src = canvas.toDataURL();
+	img.style.width="auto";
+	img.style.maxWidth="100%";
+	img.style.height="auto";		
+	img.onload=function(){
+
+	img.hidden=false;
+	var key=localStorage.orderId;
+	var	neworder={
+	"Image": img.src,
+	"Discription": document.getElementById("Description").value,
+	"HighEndSeller": document.getElementById("HighEndSeller").value,
+	"MyPrice": document.getElementById("MyPrice").value,
+	"DeliveryFromSeller": document.getElementById("DeliveryFromSeller").value,
+	"Nameofclient": document.getElementById("NameOfClient").value,
+	"Address": document.getElementById("Address").value,
+	"DateOfOrder": document.getElementById("DateOfOrder").value,
+	"SellingPrice": document.getElementById("SellingPrice").value,
+    "DeliveredToMe": "false",
+    "DeliveredToClient": "false",	
+	"DaysFromOrder": "0",
+	"Profit": (Number(document.getElementById("SellingPrice").value)-Number(document.getElementById("MyPrice").value)-Number(document.getElementById("DeliveryFromSeller").value)).toString() 	
+	};
+
+	var newOrderKey=database.ref().child('MyOrderList').push().key;
+	var updates={};
+	updates['/MyOrderList/'+newOrderKey]=neworder;
+	database.ref().update(updates);	
+	window.alert("New Order Added");
+	}
+      }
+      fileReader.readAsDataURL(fileToLoad);
+	 
+	  
+    }	
+	else{
+		window.alert("please enter the correct date format");
+	
+	}
+	}
+
+	}
+
+	
+
+	</script>
+	
+
+	</body>
+	</html>	

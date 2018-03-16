@@ -1,0 +1,164 @@
+<!DOCTYPE hTML>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+	<title>Costs</title>
+		<link rel="stylesheet" href="main.css" type="text/css">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="keywords" content="footer, contact, form, icons" />
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+		<link href="http://fonts.googleapis.com/css?family=Cookie" rel="stylesheet" type="text/css">
+		<script src="jquery-3.3.1.min.js"></script>
+		<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+		
+	</head>
+	<body >
+		<div class="topnav" id="myTopnav">
+					
+			<a href="index.html" class="active">Home</a>
+			<a href="order.html">Order</a>
+			<a href="Costs.html">My Costs</a>
+			<a href="profits.html">Profits</a>
+			<a href="charts.html">Charts</a>
+			<a href="index.html">Set Budget</a>
+			<a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="responsive()">&#9776;</a>
+		</div>
+		<div class="title">My Shop</div>
+		<input type="text" id="myBudget" title="Type in your Budget">
+		<button class="button" onclick="totalProfit()" style="vertical-align:middle"><span>Total Profit</span></button><br>
+		<p>From: <input type="text" id="StartingDate" ></p><br>
+		<p>To :  <input type="text" id="EndingDate" ></p><br>
+		<button class="button" onclick="ProfitByDate()" style="vertical-align:middle"><span>Profit by Date</span></button>
+		<div id="text"><p></p><a></a></div>
+
+
+
+	
+	</script>	
+
+	<footer class="footer-distributed">
+
+			<div class="footer-left">
+
+				<h3>My<span>Shop</span></h3>
+
+				<p class="footer-links">
+					<a href="index.html">Home</a>
+					·
+					<a href="order.html">Order</a>
+					·
+					<a href="charts.html">Charts</a>
+					·
+					<a href="index.html">Set Budget</a>
+				</p>
+
+				<p class="footer-company-name">My Shop &copy; 2018</p>
+
+
+
+				</div>
+
+			</div>
+
+
+
+	</footer>
+	  	
+	
+	<script src="https://www.gstatic.com/firebasejs/4.10.1/firebase.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/4.9.1/firebase-database.js"></script>
+	<script>
+	  // Initialize Firebase
+	  var config = {
+		apiKey: "",
+		authDomain: "",
+		databaseURL: "",
+		projectId: "",
+		storageBucket: "",
+		messagingSenderId: ""
+	  };
+	  firebase.initializeApp(config);
+	</script>
+	<script>
+	function totalProfit(){
+	
+	
+	firebase.database().ref("TotalProfit").once("value").then(function(data){
+	var profit=data.val();
+	document.getElementById("myBudget").value=profit.TotalProfit;
+	});
+	
+	
+	
+	}
+	
+	function ProfitByDate(){
+	
+		var profit=0;
+		if( (/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/).test(document.getElementById("StartingDate").value) && (/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/).test(document.getElementById("StartingDate").value) ){
+		
+	  firebase.database().ref('MyDeliveredList').once('value').then(function(snapshot) {
+	  snapshot.forEach(function(ordersnap){
+	  var order=ordersnap.val();
+	  if(DateCheck(document.getElementById("StartingDate").value,document.getElementById("EndingDate").value,order.DateOfOrder)){
+		console.log("There are dates in the intervel");
+		profit=profit+Number(order.Profit);
+	  }
+	else
+	{
+	console.log("The date is outside dates in the intervel");}
+
+	
+      //document.getElementById('output').src=img.src;  
+	});	
+	var p = document.getElementById("text");
+	var newElement = document.createElement("p");
+	newElement.setAttribute('id', "texbox");
+	newElement.innerHTML = "The Profit from "+document.getElementById("StartingDate").value+" to "+document.getElementById("EndingDate").value+" is: "+profit.toString();
+	p.appendChild(newElement);
+	});
+	
+	}
+	else 
+	window.alert("Check The entered date formats!");
+	}
+	function DateCheck(From,to,check) {
+
+	var d1 = From.split("/");
+	var d2 = to.split("/");
+	var c = check.split("/");
+
+	var FromD = new Date(d1[2], parseInt(d1[1])-1, d1[0]);  // -1 because months are from 0 to 11
+	var toD   = new Date(d2[2], parseInt(d2[1])-1, d2[0]);
+	var checkD = new Date(c[2], parseInt(c[1])-1, c[0]);	
+	if(checkD >= FromD && checkD <= toD){
+	return true;}
+	else
+	return false;	
+    }
+
+	
+	</script>
+	<script>
+	function responsive() {
+		var x = document.getElementById("myTopnav");
+		if (x.className === "topnav") {
+			x.className += " responsive";
+		} else {
+			x.className = "topnav";
+		}
+	}
+
+	</script>
+
+	<script>		
+
+	function searchtypefunction() {
+    document.getElementById("myDropdown").classList.toggle("show");
+}
+	</script>
+	
+</body>
+</html>		
+	

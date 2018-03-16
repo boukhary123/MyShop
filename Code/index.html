@@ -1,0 +1,345 @@
+<!DOCTYPE hTML>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+	<title>Costs</title>
+		<link rel="stylesheet" href="main.css" type="text/css">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="keywords" content="footer, contact, form, icons" />
+		<script src="jquery-3.3.1.min.js"></script>
+		<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+		
+	</head>
+	<body onload="ShowBudget()">
+		<div class="topnav" id="myTopnav">
+					
+			<a href="index.html" class="active">Home</a>
+			<a href="order.html">Order</a>
+			<a href="Costs.html">My Costs</a>
+			<a href="profits.html">Profits</a>
+			<a href="charts.html">Charts</a>
+			<a href="index.html">Set Budget</a>
+			<a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="responsive()">&#9776;</a>
+		</div>
+		<div class="title">My Shop</div>
+		<input type="text" id="myBudget" title="Type in your Budget">
+		<button class="button" onclick="ChangeBudget()" style="vertical-align:middle"><span>Change Budget</span></button><br>
+		<p>From: <input type="text" id="StartingDate" ></p><br>
+		<p>To :  <input type="text" id="EndingDate" ></p><br>
+		<button class="button" onclick="FilterDate()" style="vertical-align:middle"><span>Filter by Date</span></button>
+			<button onclick="searchtypefunction()" class="dropbtn">Show</button>
+			  <div id="myDropdown" class="dropdown-content">
+				<label ><input id="UndeliveredOrders" type="button"  onclick="showImages()">Show Undelivered Orders</label>
+				<label ><input id="AllOrders" type="button" onclick="showAllImages()">Show All Orders</label>
+			  </div>
+			  <button onclick="searchtypefunction1()" class="dropbtn">Delete</button>
+			  <div id="myDropdown1" class="dropdown-content">
+				<label ><input id="UndeliveredOrders" type="button"  onclick="DeleteImages()">Delete Images</label>
+				<label ><input id="AllOrders" type="button" onclick="DeleteAllDelivered()">Delete All Delivered Orders</label>
+			  </div>
+	<div id="main"></div>
+	<div id="imgDiv"><img id="imgDiv" src="" alt=""><div id="text"><p></p></div></div>
+	<script>
+
+	function showImages(){
+	document.getElementById("myDropdown").classList.toggle("show");
+	var image_x = document.getElementById('imgDiv');
+		image_x.parentNode.removeChild(image_x);
+		var div=document.createElement("div");
+		div.id="imgDiv";
+		document.getElementById("main").appendChild(div);
+		var img=document.createElement("img");
+		img.src="";
+		img.id="imgDiv";
+		img.alt="";
+		document.getElementById("imgDiv").appendChild(img)
+	firebase.database().ref('MyOrderList').once('value').then(function(snapshot) {
+	  snapshot.forEach(function(ordersnap){
+	  var order=ordersnap.val();
+	  if(order.DeliveredToClient==="false"){	  
+	  var figure = document.createElement("figure");
+	  var image = new Image();
+	  var figcaption = document.createElement("figcaption");
+	  //attributing the input value in the first textarea as source for the image to be displayed
+	  image.src = order.Image;
+	  image.id = "newImage";
+	  figure.appendChild(image);
+	  //making the image a link to its url
+	  var a = document.createElement("a");
+	  var key=ordersnap.key;
+	  a.href="javascript:SaveOrder("+"'"+ordersnap.key+"'"+",0)";
+	  a.appendChild(image);
+	  figure.appendChild(a);
+	  //creating a Node and setting the input value from the second textarea as caption
+	  var caption = "Description: "+order.Discription+"\nDaysFromOrder: "+order.DaysFromOrder;
+	  var text = document.createTextNode(caption);
+	  document.getElementById("imgDiv").appendChild(figure);
+	  figure.appendChild(figcaption);
+	  figcaption.appendChild(text);
+	  }
+
+
+      //document.getElementById('output').src=img.src;  
+	});
+	});
+	//document.getElementById("showImages")
+	
+	}
+	function showAllImages(){
+	document.getElementById("myDropdown").classList.toggle("show");
+	var image_x = document.getElementById('imgDiv');
+		image_x.parentNode.removeChild(image_x);
+		var div=document.createElement("div");
+		div.id="imgDiv";
+		document.getElementById("main").appendChild(div);
+		var img=document.createElement("img");
+		img.src="";
+		img.id="imgDiv";
+		img.alt="";
+		document.getElementById("imgDiv").appendChild(img)
+	  firebase.database().ref('MyOrderList').once('value').then(function(snapshot) {
+	  snapshot.forEach(function(ordersnap){
+	  var order=ordersnap.val();	  
+	  var figure = document.createElement("figure");
+	  var image = new Image();
+	  var figcaption = document.createElement("figcaption");
+	  //attributing the input value in the first textarea as source for the image to be displayed
+	  image.src = order.Image;
+	  image.id = "newImage";
+	  figure.appendChild(image);
+	  //making the image a link to its url
+	  var a = document.createElement("a");
+	  var key=ordersnap.key
+	  a.href="javascript:SaveOrder("+"'"+ordersnap.key+"'"+",0)";
+	  a.appendChild(image);
+	  figure.appendChild(a);
+	  //creating a Node and setting the input value from the second textarea as caption
+	  var caption = "Description: "+order.Discription+"\nDaysFromOrder: "+order.DaysFromOrder;
+	  var text = document.createTextNode(caption);
+	  document.getElementById("imgDiv").appendChild(figure);
+	  figure.appendChild(figcaption);
+	  figcaption.appendChild(text);
+	 
+      //document.getElementById('output').src=img.src;  
+	});
+	});
+	 firebase.database().ref('MyDeliveredList').once('value').then(function(snapshot) {
+	  snapshot.forEach(function(ordersnap){
+	  var order=ordersnap.val();	  
+	  var figure = document.createElement("figure");
+	  var image = new Image();
+	  var figcaption = document.createElement("figcaption");
+	  //attributing the input value in the first textarea as source for the image to be displayed
+	  image.src = order.Image;
+	  image.id = "newImage";
+	  figure.appendChild(image);
+	  //making the image a link to its url
+	  var a = document.createElement("a");
+	  var key=ordersnap.key
+	  console.log(key);
+	  a.href="javascript:SaveOrder("+"'"+key+"'"+",1)";
+	  a.appendChild(image);
+	  figure.appendChild(a);
+	  //creating a Node and setting the input value from the second textarea as caption
+	  var caption = "Description: "+order.Discription+"\nDaysFromOrder: "+order.DaysFromOrder;
+	  var text = document.createTextNode(caption);
+	  document.getElementById("imgDiv").appendChild(figure);
+	  figure.appendChild(figcaption);
+	  figcaption.appendChild(text);
+	 
+      //document.getElementById('output').src=img.src;  
+	});
+	});
+	
+	}
+
+
+	
+	</script>	
+
+	<footer class="footer-distributed">
+
+			<div class="footer-left">
+
+				<h3>My<span>Shop</span></h3>
+
+				<p class="footer-links">
+					<a href="index.html">Home</a>
+					·
+					<a href="order.html">Order</a>
+					·
+					<a href="charts.html">Charts</a>
+					·
+					<a href="index.html">Set Budget</a>
+				</p>
+
+				<p class="footer-company-name">My Shop &copy; 2018</p>
+
+
+
+				</div>
+
+			</div>
+
+
+
+	</footer>
+	  	
+	
+	<script src="https://www.gstatic.com/firebasejs/4.10.1/firebase.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/4.9.1/firebase-database.js"></script>
+	<script>
+	  // Initialize Firebase
+	  var config = {
+		apiKey: "",
+		authDomain: "",
+		databaseURL: "",
+		projectId: "",
+		storageBucket: "",
+		messagingSenderId: ""
+	  };
+	  firebase.initializeApp(config);
+	</script>
+	<script>
+	function responsive() {
+		var x = document.getElementById("myTopnav");
+		if (x.className === "topnav") {
+			x.className += " responsive";
+		} else {
+			x.className = "topnav";
+		}
+	}
+
+	</script>
+
+	<script>
+	function ShowBudget(){
+	return firebase.database().ref('Budget').once('value').then(function(data) {
+	var budget=data.val();
+	document.getElementById("myBudget").value=budget.Budget;
+	});
+	}
+	</script>
+	<script>
+	function ChangeBudget(){
+	if( /^\d+$/.test(document.getElementById("myBudget").value)){
+	firebase.database().ref("Budget").set({'Budget': document.getElementById("myBudget").value});
+	window.alert("New Budget Set");	}
+	else 
+	{
+	window.alert("Only Numbers");
+	}
+
+
+	}
+	</script>
+
+	<script>
+	function SaveOrder(key,ref){	
+	localStorage.ViewOrderId=key;
+	ref===1?localStorage.ref="1":localStorage.ref="0";
+	console.log(key);
+	console.log(typeof(ref));
+	window.location.href = "vieworder.html";	
+	}
+	
+	</script> 
+	<script>
+	function FilterDate(){
+		if( (/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/).test(document.getElementById("StartingDate").value) && (/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/).test(document.getElementById("EndingDate").value) ){
+		var image_x = document.getElementById('imgDiv');
+		image_x.parentNode.removeChild(image_x);
+		var div=document.createElement("div");
+		div.id="imgDiv";
+		document.getElementById("main").appendChild(div);
+		var img=document.createElement("img");
+		img.src="";
+		img.id="imgDiv";
+		img.alt="";
+		document.getElementById("imgDiv").appendChild(img);
+		return firebase.database().ref('MyOrderList').once('value').then(function(snapshot) {
+	  snapshot.forEach(function(ordersnap){
+	  var order=ordersnap.val();
+	  if(DateCheck(document.getElementById("StartingDate").value,document.getElementById("EndingDate").value,order.DateOfOrder)){
+		console.log("There are dates in the intervel");
+	  var figure = document.createElement("figure");
+	  var image = new Image();
+	  var figcaption = document.createElement("figcaption");
+	  //attributing the input value in the first textarea as source for the image to be displayed
+	  image.src = order.Image;
+	  image.id = "newImage";
+	  figure.appendChild(image);
+	  //making the image a link to its url
+	  var a = document.createElement("a");
+	  var key=ordersnap.key
+	  a.href="javascript:SaveOrder("+"'"+ordersnap.key+"'"+")";
+	  a.appendChild(image);
+	  figure.appendChild(a);
+	  //creating a Node and setting the input value from the second textarea as caption
+	  var caption = "Description: "+order.Discription+"\nDaysFromOrder: "+order.DaysFromOrder;
+	  var text = document.createTextNode(caption);
+	  document.getElementById("imgDiv").appendChild(figure);
+	  figure.appendChild(figcaption);
+	  figcaption.appendChild(text);
+	  }
+	else
+	console.log("The date is outside dates in the intervel");
+	
+      //document.getElementById('output').src=img.src;  
+	});
+	});
+	}
+	else 
+	window.alert("Check The entered date formats!");
+	}
+	
+	function DateCheck(From,to,check) {
+
+	var d1 = From.split("/");
+	var d2 = to.split("/");
+	var c = check.split("/");
+
+	var FromD = new Date(d1[2], parseInt(d1[1])-1, d1[0]);  // -1 because months are from 0 to 11
+	var toD   = new Date(d2[2], parseInt(d2[1])-1, d2[0]);
+	var checkD = new Date(c[2], parseInt(c[1])-1, c[0]);	
+	if(checkD >= FromD && checkD <= toD){
+	return true;}
+	else
+	return false;
+
+	
+    }
+	function searchtypefunction() {
+    document.getElementById("myDropdown").classList.toggle("show");
+}
+	function searchtypefunction1() {
+    document.getElementById("myDropdown1").classList.toggle("show");
+}
+	function DeleteImages(){
+	
+	firebase.database().ref('MyDeliveredList').once('value').then(function(snapshot) {
+	  snapshot.forEach(function(ordersnap){
+	  var order=ordersnap.val();
+	  firebase.database().ref('MyDeliveredList/'+ordersnap.key+'/Image').set(null);			
+	  
+	});
+	window.location.href="index.html"; 
+	});
+	
+	}
+	function DeleteAllDeliveredf(){
+	
+	firebase.database().ref('MyDeliveredList').set(null);		
+	window.location.href="index.html";  
+
+	
+	
+	
+	}
+
+	</script>
+	
+</body>
+</html>		
+	

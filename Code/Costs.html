@@ -1,0 +1,129 @@
+<!DOCTYPE hTML>
+<html>
+	<head>
+		<meta charset="utf-8"/>
+	<title>Costs</title>
+		<link rel="stylesheet" href="main.css" type="text/css">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="keywords" content="footer, contact, form, icons" />
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+		<link href="http://fonts.googleapis.com/css?family=Cookie" rel="stylesheet" type="text/css">
+		<script src="jquery-3.3.1.min.js"></script>
+		<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+		
+	</head>
+	<body>
+		<div class="topnav" id="myTopnav">
+					
+			<a href="index.html" class="active">Home</a>
+			<a href="order.html">Order</a>
+			<a href="#">My Costs</a>
+			<a href="profits.html">Profits</a>
+			<a href="#">Charts</a>
+			<a href="index.html">Set Budget</a>
+			<a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="responsive()">&#9776;</a>
+		</div>
+		<div class="title">My Shop</div>
+		<button class="button" onclick="myCosts()" style="vertical-align:middle"><span>View My Costs</span></button><br>
+		<div id="text"><p></p><a></a></div>
+
+	<footer class="footer-distributed">
+
+			<div class="footer-left">
+
+				<h3>My<span>Shop</span></h3>
+
+				<p class="footer-links">
+					<a href="index.html">Home</a>
+					·
+					<a href="order.html">Order</a>
+					·
+					<a href="charts.html">Charts</a>
+					·
+					<a href="index.html">Set Budget</a>
+				</p>
+
+				<p class="footer-company-name">My Shop &copy; 2018</p>
+
+
+
+				</div>
+
+			</div>
+
+
+
+	</footer>
+	  	
+	
+	<script src="https://www.gstatic.com/firebasejs/4.10.1/firebase.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/4.9.1/firebase-database.js"></script>
+	<script>
+	  // Initialize Firebase
+	  var config = {
+		apiKey: "",
+		authDomain: "",
+		databaseURL: "",
+		projectId: "",
+		storageBucket: "",
+		messagingSenderId: ""
+	  };
+	  firebase.initializeApp(config);
+	</script>
+	<script>
+	function responsive() {
+		var x = document.getElementById("myTopnav");
+		if (x.className === "topnav") {
+			x.className += " responsive";
+		} else {
+			x.className = "topnav";
+		}
+	}
+
+	</script>
+	<script>
+	var profit=0;
+	function myCosts(){
+	profit=0;
+	firebase.database().ref('MyOrderList').once('value').then(function(snapshot) {
+	  snapshot.forEach(function(ordersnap){
+	  var order=ordersnap.val();
+	  if(order.DeliveredToMe==="false"){
+		profit=profit+Number(order.DeliveryFromSeller)+Number(order.MyPrice);
+		var p = document.getElementById("text");
+		var newElement = document.createElement("p");
+		newElement.setAttribute('id', "texbox");
+		newElement.innerHTML = "You have to pay to "+order.HighEndSeller+": "+(Number(order.DeliveryFromSeller)+Number(order.MyPrice)).toString();
+		var a = document.createElement("a");
+		var key=ordersnap.key;
+		a.href="javascript:SaveOrder("+"'"+ordersnap.key+"'"+")";
+		a.appendChild(newElement);
+		p.appendChild(a);
+		//console.log(profit);
+		
+		
+		}
+	});
+	var p = document.getElementById("text");
+	var newElement = document.createElement("p");
+	newElement.setAttribute('id', "texbox");
+	newElement.innerHTML = "You have to pay in total: "+profit.toString();
+	p.appendChild(newElement);
+	//window.alert(profit);
+	});
+	//window.alert("hi");   	
+	//document.getElementById("text").innerHTML=profit.toString();
+	//console.log(profit);
+	}
+	function SaveOrder(key){	
+	localStorage.ViewOrderId=key;
+	window.location.href = "vieworder.html";	
+	}
+	</script>
+
+
+	
+</body>
+</html>		
+	
