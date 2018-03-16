@@ -10,7 +10,19 @@ The web app is serverless based on client side and using firebase console for da
 ![Costs](https://github.com/boukhary123/MyShop/blob/master/Screenshots/MyCostsPage.PNG "Costs")
 ![Charts](https://github.com/boukhary123/MyShop/blob/master/Screenshots/ChartsPage.PNG "Charts") 
 ![Menu](https://github.com/boukhary123/MyShop/blob/master/Screenshots/Menu.PNG "Menu") 
+# Built with
+* HTML5
+*Javascript
+*Firebase-Databse
+*Firebase-Cloud Functions
+# Authors 
+* Alaa Boukhary
+# References
+* StackOverflow
+* W3c.org
+* Firebase Guides
 
+         
 
 
 
